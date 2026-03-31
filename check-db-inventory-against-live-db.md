@@ -1,15 +1,16 @@
 ---
 description: 连接数据库，将 db-inventory 文档与实际数据库进行核对，输出差异报告。
-argument-hint: <host> <port> <user> <password>
+argument-hint: <host>:<port>:<user>:<password>
 ---
 
 读取 `docs/db-inventory-*.md` 中记录的表清单，连接实际数据库，逐项核对并输出差异报告。
 
 ## 输入
 
-- `$ARGUMENTS`：`<host> <port> <user> <password>`，四个参数全部由用户提供，空格分隔。
+- `$ARGUMENTS`：`<host>:<port>:<user>:<password>`，冒号分隔。
 - **不从项目配置文件读取任何连接信息**，因为配置文件中可能是生产环境凭据。
-- 如果参数不足 4 个，停下来询问用户补全，不要猜测或从配置文件填充。
+- 如果参数不足 4 段（冒号分隔），停下来询问用户补全，不要猜测或从配置文件填充。
+- 如果密码中包含冒号，用户应将密码用引号包裹或改用空格分隔格式 `<host> <port> <user> <password>`。
 
 ## 你的角色
 
@@ -19,15 +20,19 @@ argument-hint: <host> <port> <user> <password>
 
 `docs/db-inventory-*.md` 必须存在。如果不存在，提示用户先运行 `/extract-db-inventory-from-repo-outputs`。
 
+如果匹配到**多个** db-inventory 文件，列出所有匹配项让用户选择，不要自动合并。
+
 ## 执行步骤
 
 ### Step 1: 解析参数 & 加载文档基线
 
-从用户参数中获取连接四要素：host、port、user、password。
+从用户参数中解析连接四要素（冒号分隔）：host、port、user、password。
 
 从 db-inventory 中**只提取文档基线**：
 - 所有数据库名（如 `data_prepared_new`、`portfolio_new`）
-- 每张表的：表名、表注释、字段列表、字段类型、主键
+- 每张表的：表名、表注释、字段列表、字段类型、逻辑键
+
+> 注意：db-inventory 中存储的是"逻辑键"（YAML `private_keys`，应用层 delete 条件），不一定是数据库 PRIMARY KEY。
 
 ### Step 2: 连接数据库并核对
 
@@ -64,10 +69,16 @@ ORDER BY ORDINAL_POSITION;
 
 #### 2c. 数据新鲜度
 
-对有 `valuation_date` 字段的表：
+按以下优先级确定日期列：
+1. `valuation_date`（项目约定的标准日期字段）
+2. db-inventory 逻辑键中类型为日期的字段
+3. `information_schema.COLUMNS` 中类型为 `date` 的列（若唯一则自动选用，多个则标注"多日期列，跳过"）
+4. 以上都没有 → 标记为"无日期字段"
+
+对有日期列的表：
 
 ```sql
-SELECT MAX(valuation_date) AS latest_date, COUNT(*) AS total_rows
+SELECT MAX({date_column}) AS latest_date, COUNT(*) AS total_rows
 FROM {table_name};
 ```
 

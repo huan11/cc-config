@@ -1,7 +1,6 @@
 ---
 description: 对比两个数据库环境的数据一致性，支持同机器或跨机器对比。
 argument-hint: baseline:<host>:<port>:<user>:<password>:<db> target:<host>:<port>:<user>:<password>:<db> [--date YYYY-MM-DD] [--tables t1,t2]
-disable-model-invocation: true
 ---
 
 对比两个数据库环境的数据，A（baseline）为基准，B（target）为待验证。支持同一台机器的两个库，也支持跨机器对比（如生产只读账号 vs 开发机）。
@@ -34,7 +33,7 @@ disable-model-invocation: true
 - **--tables**：表名列表（逗号分隔，或 `*` 表示全部）。不指定则从 `docs/db-inventory-*.md` 读取表清单作为对比范围。
 - **--date**：单个日期（YYYY-MM-DD）或日期范围（`2026-03-01,2026-03-28`）。不指定则对比最近 3 个交易日。
 
-禁止在输出中粘贴密码。
+禁止在输出中粘贴密码。如果密码中包含冒号，用户应将密码用引号包裹。
 
 ## 前置条件
 
@@ -58,12 +57,21 @@ db-inventory 提供：
 4. DB 无主键时，fallback 到 `docs/db-inventory-*.md` 中的逻辑键（来自 YAML `private_keys`，是应用层 delete 条件，不一定是真主键，报告中标注"逻辑键，非 DB 约束"）
 5. 以上都没有：跳过维度 4/5/6，仅对比列名、类型、行数，标注"无主键，跳过行级对比"
 
+### 日期列检测
+
+按以下优先级确定每张表的日期列：
+1. `valuation_date` 列（项目约定的标准日期字段）
+2. db-inventory 逻辑键中类型为日期的字段
+3. `information_schema.COLUMNS` 中类型为 `date` / `datetime` 的列（若唯一则自动选用，多个则询问用户）
+4. 以上都没有 → 标记为"无日期列"，整表一次性对比
+
 ### 日期遍历策略
 
 当指定了日期范围但未指定具体单日时：
-1. 以 B 库为驱动，查询所有不重复日期值
-2. 逐日期从 A/B 分别拉取数据对比
-3. 无日期列的表整表一次性对比
+1. 用上述优先级确定日期列
+2. 以 B 库为驱动，查询该日期列的所有不重复值
+3. 逐日期从 A/B 分别拉取数据对比
+4. 无日期列的表整表一次性对比
 
 ### 大表保护
 
