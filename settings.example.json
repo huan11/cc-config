@@ -1,0 +1,19 @@
+{
+  "_说明": "settings.json 的脱敏样例。真实 settings.json 含活 token，已 gitignore。新机器：复制本文件为 settings.json 并填入真实 token。",
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "<在此填入真实 token，不要提交>",
+    "ANTHROPIC_BASE_URL": "https://api.servicesessentials.ibm.com"
+  },
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "mcp__pencil"
+    ],
+    "defaultMode": "bypassPermissions"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline-command.sh"
+  },
+  "skipDangerousModePermissionPrompt": true
+}

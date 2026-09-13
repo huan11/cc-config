@@ -1,0 +1,22 @@
+[
+  {"query": "我有个想法想做一个帮宠物主人找上门喂养的小程序,你帮我看看这事到底值不值得做", "should_trigger": true},
+  {"query": "我们这个工具上线俩月了大概三十个用户,我到底该继续加功能还是先想别的,有点迷", "should_trigger": true},
+  {"query": "我朋友都说我这个 AI 记账 App 很棒,我准备直接开始投广告拉新,你觉得节奏对吗", "should_trigger": true},
+  {"query": "做了快半年了数据一直不温不火,我是不是该 pivot 了,怎么判断", "should_trigger": true},
+  {"query": "怎么才能知道我的产品到底有没有 product-market fit,别是自我感觉良好", "should_trigger": true},
+  {"query": "我的 SaaS 月流水稳定了但全靠我一个人扛客服和排期,想开始做增长该从哪下手", "should_trigger": true},
+  {"query": "帮我把\"上班族没时间做饭\"这个痛点打磨成一个能验证的假设", "should_trigger": true},
+  {"query": "我想创业做个给律所用的 AI 工具,先帮我理一理第一步该干什么", "should_trigger": true},
+  {"query": "大厂要是明天照抄我的产品,我怎么建护城河让用户不跑", "should_trigger": true},
+  {"query": "用最狠的角度反驳一下我这个创业想法,别顺着我说", "should_trigger": true},
+  {"query": "帮我做一张竞品功能对比表,列出这五家的价格和功能", "should_trigger": false},
+  {"query": "帮我把这个 React 组件重构一下,现在太乱了", "should_trigger": false},
+  {"query": "帮我调研一下字节跳动这家公司的业务和组织架构", "should_trigger": false},
+  {"query": "我想学做产品经理,给我一个学习路径", "should_trigger": false},
+  {"query": "帮我写一份这个功能的 PRD 文档", "should_trigger": false},
+  {"query": "帮我把这份融资 BP 做成 PPT", "should_trigger": false},
+  {"query": "分析下我们后端这几个服务的 API 调用关系", "should_trigger": false},
+  {"query": "这个季度销售数据帮我做个可视化看板", "should_trigger": false},
+  {"query": "帮我给这个开源项目写个 README", "should_trigger": false},
+  {"query": "我想了解一下 SaaS 这个商业模式的历史怎么来的", "should_trigger": false}
+]
